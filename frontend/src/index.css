@@ -7,9 +7,6 @@ font-family: "Poppins", serif;
 }
 
 
-#root{
-display: flex;
-}
 
 .lightmode{
   --color:black;
