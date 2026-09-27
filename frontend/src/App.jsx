@@ -10,7 +10,7 @@ import { AuthContext } from "./context/AuthContext"
 
 function ChatApp() {
   return (
-    <div className="chatbot-container" style={{ display: 'flex', width: '100%', height: '100vh' }}>
+    <div className="chatbot-container">
       <Sidebar/>
       <Seperation/>
       <ChatSection/>

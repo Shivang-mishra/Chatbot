@@ -17,8 +17,6 @@ document.body.className=mode
   return (
     <button className="darkmodebtn" onClick={()=>{
       toggle()
-      console.log(mode);
-      
     }}>{mode==="darkmode"?<MdOutlineWbSunny />:<LuMoon />}</button>
   )
 }

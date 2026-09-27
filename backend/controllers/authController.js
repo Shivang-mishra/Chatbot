@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
             name,
             email,
             passwordHash,
-            role: 'user' // Force role to user for public registration
+            role: 'user'
         });
         
         await user.save();
@@ -58,7 +58,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
         
         res.json({ message: "Logged in successfully.", user: { id: user._id, name: user.name, email: user.email, role: user.role } });

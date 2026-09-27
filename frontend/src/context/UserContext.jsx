@@ -11,9 +11,12 @@ function UserContext({ children }) {
     const [conversations, setConversations] = useState([])
     const [activeConversationId, setActiveConversationId] = useState(null)
 
-    // Load conversations on mount
     useEffect(() => {
-        fetchConversations()
+        fetchConversations();
+        const storedId = localStorage.getItem('activeConversationId');
+        if (storedId) {
+            loadConversation(storedId, true);
+        }
     }, [])
 
     async function fetchConversations() {
@@ -30,13 +33,14 @@ function UserContext({ children }) {
 
     function newChat() {
         setActiveConversationId(null)
+        localStorage.removeItem('activeConversationId');
         setShowResult(false)
         setLoading(false)
         setError(null)
         setMessages([])
     }
 
-    async function loadConversation(id) {
+    async function loadConversation(id, isInitialLoad = false) {
         try {
             setLoading(true);
             setError(null);
@@ -49,11 +53,16 @@ function UserContext({ children }) {
             }
             
             setActiveConversationId(id);
+            localStorage.setItem('activeConversationId', id);
             setMessages(data.messages);
             setShowResult(data.messages.length > 0);
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            if (isInitialLoad) {
+                newChat();
+            } else {
+                setError(err.message);
+            }
         } finally {
             setLoading(false);
         }
@@ -67,7 +76,7 @@ function UserContext({ children }) {
             });
             
             if (response.ok) {
-                if (activeConversationId === id) {
+                if (activeConversationId === id || localStorage.getItem('activeConversationId') === id) {
                     newChat();
                 }
                 await fetchConversations();
@@ -118,6 +127,7 @@ function UserContext({ children }) {
                 
                 convId = convData._id;
                 setActiveConversationId(convId);
+                localStorage.setItem('activeConversationId', convId);
                 fetchConversations();
             }
 

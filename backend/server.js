@@ -10,7 +10,6 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Connect to MongoDB
 connectDB();
 
 app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174'], credentials: true }));
