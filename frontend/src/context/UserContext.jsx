@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { AuthContext } from './AuthContext'
+import { getApiUrl } from '../config/api'
 
 export const dataContext = createContext()
 
@@ -32,7 +33,7 @@ function UserContext({ children }) {
     async function fetchConversations() {
         if (!user) return;
         try {
-            const response = await fetch('/api/conversations', { credentials: 'include' });
+            const response = await fetch(getApiUrl('/api/conversations'), { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 setConversations(data);
@@ -57,7 +58,7 @@ function UserContext({ children }) {
             setLoading(true);
             setError(null);
             
-            const response = await fetch(`/api/conversations/${id}`, { credentials: 'include' });
+            const response = await fetch(getApiUrl(`/api/conversations/${id}`), { credentials: 'include' });
             const data = await response.json();
             
             if (!response.ok) {
@@ -83,7 +84,7 @@ function UserContext({ children }) {
     async function deleteConversation(id) {
         if (!user) return;
         try {
-            const response = await fetch(`/api/conversations/${id}`, {
+            const response = await fetch(getApiUrl(`/api/conversations/${id}`), {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -102,7 +103,7 @@ function UserContext({ children }) {
     async function renameConversation(id, newTitle) {
         if (!user) return;
         try {
-            const response = await fetch(`/api/conversations/${id}/rename`, {
+            const response = await fetch(getApiUrl(`/api/conversations/${id}/rename`), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -131,7 +132,7 @@ function UserContext({ children }) {
                 let convId = activeConversationId;
                 
                 if (!convId) {
-                    const createRes = await fetch('/api/conversations', {
+                    const createRes = await fetch(getApiUrl('/api/conversations'), {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
@@ -146,7 +147,7 @@ function UserContext({ children }) {
                     fetchConversations();
                 }
 
-                const msgRes = await fetch(`/api/conversations/${convId}/messages`, {
+                const msgRes = await fetch(getApiUrl(`/api/conversations/${convId}/messages`), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -165,7 +166,7 @@ function UserContext({ children }) {
 
                 setMessages(prev => [...prev, { role: "assistant", content: msgData.content }]);
             } else {
-                const msgRes = await fetch('/api/chat/public', {
+                const msgRes = await fetch(getApiUrl('/api/chat/public'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ messages: newMessages })

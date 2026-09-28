@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "seed:admin": "node scripts/seedAdmin.js",
+    "admin:reset-password": "node scripts/resetAdminPassword.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

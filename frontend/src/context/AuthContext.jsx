@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getApiUrl } from '../config/api';
+
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -14,7 +16,7 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            const res = await fetch('/api/auth/me', { credentials: 'include' });
+            const res = await fetch(getApiUrl('/api/auth/me'), { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 setUser(data);
@@ -30,7 +32,7 @@ export function AuthProvider({ children }) {
     };
 
     const login = async (email, password) => {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch(getApiUrl('/api/auth/login'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -45,7 +47,7 @@ export function AuthProvider({ children }) {
     };
 
     const register = async (name, email, password) => {
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch(getApiUrl('/api/auth/register'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })
@@ -59,7 +61,7 @@ export function AuthProvider({ children }) {
     };
 
     const logout = async () => {
-        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        await fetch(getApiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' });
         setUser(null);
         navigate('/login');
     };

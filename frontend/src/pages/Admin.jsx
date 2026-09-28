@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+import { getApiUrl } from '../config/api';
+
 function Admin() {
     const [stats, setStats] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('/api/admin/dashboard', { credentials: 'include' })
+        fetch(getApiUrl('/api/admin/dashboard'), { credentials: 'include' })
             .then(res => {
                 if (!res.ok) throw new Error("Unauthorized");
                 return res.json();
