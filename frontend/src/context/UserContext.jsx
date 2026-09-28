@@ -1,8 +1,10 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect, useContext } from 'react'
+import { AuthContext } from './AuthContext'
 
 export const dataContext = createContext()
 
 function UserContext({ children }) {
+    const { user } = useContext(AuthContext);
     const [input, setInput] = useState("")
     const [showResult, setShowResult] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -12,14 +14,23 @@ function UserContext({ children }) {
     const [activeConversationId, setActiveConversationId] = useState(null)
 
     useEffect(() => {
-        fetchConversations();
-        const storedId = localStorage.getItem('activeConversationId');
-        if (storedId) {
-            loadConversation(storedId, true);
+        if (user) {
+            fetchConversations();
+            const storedId = localStorage.getItem('activeConversationId');
+            if (storedId) {
+                loadConversation(storedId, true);
+            }
+        } else {
+            setConversations([]);
+            setMessages([]);
+            setActiveConversationId(null);
+            localStorage.removeItem('activeConversationId');
+            setShowResult(false);
         }
-    }, [])
+    }, [user])
 
     async function fetchConversations() {
+        if (!user) return;
         try {
             const response = await fetch('/api/conversations', { credentials: 'include' });
             if (response.ok) {
@@ -41,6 +52,7 @@ function UserContext({ children }) {
     }
 
     async function loadConversation(id, isInitialLoad = false) {
+        if (!user) return;
         try {
             setLoading(true);
             setError(null);
@@ -69,6 +81,7 @@ function UserContext({ children }) {
     }
 
     async function deleteConversation(id) {
+        if (!user) return;
         try {
             const response = await fetch(`/api/conversations/${id}`, {
                 method: 'DELETE',
@@ -87,6 +100,7 @@ function UserContext({ children }) {
     }
 
     async function renameConversation(id, newTitle) {
+        if (!user) return;
         try {
             const response = await fetch(`/api/conversations/${id}/rename`, {
                 method: 'PUT',
@@ -113,38 +127,59 @@ function UserContext({ children }) {
         setMessages(newMessages);
 
         try {
-            let convId = activeConversationId;
-            
-            if (!convId) {
-                const createRes = await fetch('/api/conversations', {
+            if (user) {
+                let convId = activeConversationId;
+                
+                if (!convId) {
+                    const createRes = await fetch('/api/conversations', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ messageContent: input })
+                    });
+                    const convData = await createRes.json();
+                    if (!createRes.ok) throw new Error(convData.error || "Failed to create conversation");
+                    
+                    convId = convData._id;
+                    setActiveConversationId(convId);
+                    localStorage.setItem('activeConversationId', convId);
+                    fetchConversations();
+                }
+
+                const msgRes = await fetch(`/api/conversations/${convId}/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ messageContent: input })
+                    body: JSON.stringify({ content: input })
                 });
-                const convData = await createRes.json();
-                if (!createRes.ok) throw new Error(convData.error || "Failed to create conversation");
-                
-                convId = convData._id;
-                setActiveConversationId(convId);
-                localStorage.setItem('activeConversationId', convId);
-                fetchConversations();
+
+                const contentType = msgRes.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error("Unexpected server response. Please try again.");
+                }
+                const msgData = await msgRes.json();
+
+                if (!msgRes.ok) {
+                    throw new Error(msgData.error || "Failed to get AI response.");
+                }
+
+                setMessages(prev => [...prev, { role: "assistant", content: msgData.content }]);
+            } else {
+                const msgRes = await fetch('/api/chat/public', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: newMessages })
+                });
+                const contentType = msgRes.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error("Unexpected server response. Please try again.");
+                }
+                const msgData = await msgRes.json();
+
+                if (!msgRes.ok) throw new Error(msgData.error || "Failed to get AI response.");
+
+                setMessages(prev => [...prev, { role: "assistant", content: msgData.content }]);
             }
-
-            const msgRes = await fetch(`/api/conversations/${convId}/messages`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ content: input })
-            });
-
-            const msgData = await msgRes.json();
-
-            if (!msgRes.ok) {
-                throw new Error(msgData.error || "Failed to get AI response.");
-            }
-
-            setMessages(prev => [...prev, { role: "assistant", content: msgData.content }])
         } catch (err) {
             console.error(err);
             setError(err.message || "Failed to process message. Please try again.")

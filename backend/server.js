@@ -17,9 +17,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 const adminRoutes = require('./routes/adminRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', authMiddleware.authenticateUser, conversationRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.listen(PORT, () => {

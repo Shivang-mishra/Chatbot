@@ -45,7 +45,7 @@ function App() {
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
       <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-      <Route path="/" element={<ProtectedRoute><ChatApp /></ProtectedRoute>} />
+      <Route path="/" element={<ChatApp />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

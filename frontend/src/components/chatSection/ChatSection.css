@@ -37,7 +37,7 @@
 
 .online-badge {
     font-size: 12px;
-    color: #10b981;
+    color: var(--online-color, #10b981);
     display: flex;
     align-items: center;
     font-weight: 500;
@@ -387,7 +387,7 @@
     border: 1px solid var(--border-color);
     border-radius: 24px;
     padding: 10px 15px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    box-shadow: var(--composer-shadow, 0 8px 32px rgba(0,0,0,0.08));
 }
 
 .input-container textarea {

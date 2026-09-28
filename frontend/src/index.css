@@ -51,7 +51,7 @@ body {
   top: -20vh; left: -10vw;
   width: 70vw; height: 70vh;
   background: radial-gradient(circle, var(--accent) 0%, transparent 60%);
-  opacity: 0.15;
+  opacity: var(--glow-opacity-1, 0.15);
   filter: blur(100px);
   animation: float1 25s ease-in-out infinite;
   z-index: -1;
@@ -64,7 +64,7 @@ body {
   bottom: -20vh; right: -10vw;
   width: 60vw; height: 60vh;
   background: radial-gradient(circle, var(--purple-glow) 0%, transparent 60%);
-  opacity: 0.12;
+  opacity: var(--glow-opacity-2, 0.12);
   filter: blur(100px);
   animation: float2 30s ease-in-out infinite reverse;
   z-index: -1;
@@ -79,19 +79,23 @@ body {
 }
 
 .lightmode {
-  --color: #1a1a1a;
-  --color-secondary: #555555;
-  --background-color: #f9f9fb;
+  --color: #0f172a;
+  --color-secondary: #334155;
+  --background-color: #f8fafc;
   --btn-background-color: #ffffff;
-  --btn-color: #1a1a1a;
-  --hover-btn-background-color: #f0f0f5;
-  --border-color: rgba(0, 0, 0, 0.08);
+  --btn-color: #0f172a;
+  --hover-btn-background-color: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.15);
   --bubble-ai: #ffffff;
   --bubble-user: #e2e8f0;
   --accent: #2563eb;
   --purple-glow: #9333ea;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --grid-color: rgba(0, 0, 0, 0.03);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --grid-color: rgba(0, 0, 0, 0.02);
+  --glow-opacity-1: 0.08;
+  --glow-opacity-2: 0.06;
+  --composer-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  --online-color: #059669;
 }
 
 .darkmode {
@@ -108,4 +112,8 @@ body {
   --purple-glow: #c084fc;
   --glass-bg: rgba(15, 23, 42, 0.7);
   --grid-color: rgba(255, 255, 255, 0.02);
+  --glow-opacity-1: 0.15;
+  --glow-opacity-2: 0.12;
+  --composer-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --online-color: #10b981;
 }

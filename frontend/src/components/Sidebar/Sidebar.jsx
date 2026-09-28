@@ -272,7 +272,7 @@ function Sidebar() {
           </div>
         </div>
         
-        {user && (
+        {user ? (
           <div className="sidebar-bottom">
              <div className="user-profile-container" ref={menuRef}>
                <div className="user-profile" onClick={() => setMenuOpen(!menuOpen)}>
@@ -323,6 +323,21 @@ function Sidebar() {
                    </div>
                  </div>
                )}
+             </div>
+          </div>
+        ) : (
+          <div className="sidebar-bottom">
+             <div className="user-profile-container" onClick={() => navigate('/login')} style={{ cursor: 'pointer' }}>
+               <div className="user-profile" style={{ justifyContent: 'center' }}>
+                 {extend ? (
+                     <div className="user-details" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                         <FaUser size={20} />
+                         <span className="user-name">Login / Register</span>
+                     </div>
+                 ) : (
+                     <div className="avatar" title="Login"><FaUser /></div>
+                 )}
+               </div>
              </div>
           </div>
         )}
