@@ -14,6 +14,10 @@
 - [x] Light Mode contrast improvements (darker text, visible composer borders, softer glowing backgrounds)
 - [x] Optional Public Chat functionality (ability to use Gemini without creating an account or polluting the database)
 - [x] Safe JSON parsing on the frontend to gracefully handle unexpected server HTML errors
+- [x] Deploy frontend to Vercel (Production URL: https://chatbot-mocha-six-11.vercel.app)
+- [x] Deploy backend to Render (Production URL: https://chatbot-f3rk.onrender.com)
+- [x] Configure MongoDB Atlas network access for Render outbound IPs
+- [x] Fix cross-origin cookie storage issue for production authentication (credentials: 'include')
 
 ## In Progress
 - [ ] No major features currently in active development.

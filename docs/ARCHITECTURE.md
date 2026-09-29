@@ -52,17 +52,21 @@ Browser (React/Vite)
 4. **Session Retrieval**: On load, `AuthContext` calls `/api/auth/me` to read the cookie securely and populate the user state.
 5. **Authorization**: The `authenticateUser` middleware checks the token's validity before granting access to `/api/conversations`.
 
-## 6. Chat Flow
+## 6. Final Production Request Flow
 
-1. **User Message**: Typed into `ChatSection.jsx`, dispatched to `UserContext.jsx`.
-2. **Authorization Fork**: 
-   - *If Authenticated*: `UserContext` calls `POST /api/conversations/:id/messages`.
-   - *If Unauthenticated*: `UserContext` calls `POST /api/chat/public`.
-3. **Backend Processing**: 
-   - *Authenticated*: Validates user, saves user message to DB, passes context to `geminiService`, saves AI response to DB, returns JSON.
-   - *Public*: Passes context straight to `geminiService`, returns JSON instantly.
-4. **Gemini Service**: Connects securely to the Google Generative AI API using the environment `GEMINI_API_KEY`.
-5. **Frontend Rendering**: `UserContext` updates `messages` state, `ChatSection` renders it using Markdown components.
+**Guest (Unauthenticated):**
+1. User types message in Vercel frontend.
+2. Frontend calls `POST /api/chat/public`.
+3. Render backend receives request.
+4. Backend passes context to Gemini API.
+5. Backend returns response to Vercel frontend.
+
+**Authenticated:**
+1. User logs in/registers from Vercel frontend with `credentials: 'include'`.
+2. Render backend issues an `HttpOnly` authentication cookie (configured with `secure: true` and `sameSite: 'none'` for cross-origin).
+3. User types message; Vercel frontend makes a protected API request (e.g., `POST /api/conversations/:id/messages`) with `credentials: 'include'`.
+4. Render backend validates the cookie and accesses MongoDB Atlas and Gemini as required.
+5. Backend returns the processed response to the frontend.
 
 ## 7. Database Architecture
 
@@ -78,7 +82,7 @@ The Mongoose models track persistent chat states:
 - **Model**: Currently configured to use `gemini-robotics-er-2-preview`.
 - **Instructions**: Provided with a strict system instruction to act as "Shivang AI" and generate clear text/code.
 
-## 9. Request/Response Flow
+## 9. Request/Response Flow & Network Architecture
 
 Important API boundaries:
 - `POST /api/auth/login` (Auth validation, returns User)
@@ -86,6 +90,11 @@ Important API boundaries:
 - `GET /api/conversations` (Fetches user's history)
 - `POST /api/conversations/:id/messages` (Private chat)
 - `POST /api/chat/public` (Ephemeral public chat)
+
+### Network and CORS
+- **Vercel → Render CORS**: The backend enables CORS for the configured Vercel frontend origin (`FRONTEND_URL`) with credentials enabled.
+- **Render → MongoDB Atlas**: The backend establishes a secure connection to MongoDB Atlas, which is configured to allow the Render outbound IP ranges required by the deployed service (`74.220.48.0/24`, `74.220.56.0/24`).
+- **Backend-Only Gemini API**: The Gemini API key is completely isolated to the Render backend environment and never exposed to the client.
 
 ## 10. Security Boundaries
 
