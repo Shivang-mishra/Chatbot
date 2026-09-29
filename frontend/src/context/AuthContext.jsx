@@ -19,7 +19,11 @@ export function AuthProvider({ children }) {
             const res = await fetch(getApiUrl('/api/auth/me'), { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
-                setUser(data);
+                if (data && (data._id || data.id)) {
+                    setUser(data);
+                } else {
+                    setUser(null);
+                }
             } else {
                 setUser(null);
             }

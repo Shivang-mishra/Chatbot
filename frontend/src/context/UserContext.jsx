@@ -128,7 +128,7 @@ function UserContext({ children }) {
         setMessages(newMessages);
 
         try {
-            if (user) {
+            if (user && (user._id || user.id)) {
                 let convId = activeConversationId;
                 
                 if (!convId) {
