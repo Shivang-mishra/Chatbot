@@ -8,14 +8,22 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const submittingRef = React.useRef(false);
     const { register } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (submittingRef.current) return;
+        submittingRef.current = true;
+        setIsSubmitting(true);
+        setError(null);
         try {
             await register(name, email, password);
         } catch (err) {
             setError(err.message);
+            submittingRef.current = false;
+            setIsSubmitting(false);
         }
     };
 
@@ -31,6 +39,7 @@ function Register() {
                         placeholder="Name" 
                         value={name} 
                         onChange={e => setName(e.target.value)} 
+                        disabled={isSubmitting}
                         required 
                     />
                     <input 
@@ -39,6 +48,7 @@ function Register() {
                         placeholder="Email" 
                         value={email} 
                         onChange={e => setEmail(e.target.value)} 
+                        disabled={isSubmitting}
                         required 
                     />
                     <input 
@@ -47,9 +57,12 @@ function Register() {
                         placeholder="Password" 
                         value={password} 
                         onChange={e => setPassword(e.target.value)} 
+                        disabled={isSubmitting}
                         required 
                     />
-                    <button type="submit" className="auth-button">Register</button>
+                    <button type="submit" className="auth-button" disabled={isSubmitting}>
+                        {isSubmitting ? 'Registering...' : 'Register'}
+                    </button>
                 </form>
                 <p className="auth-link-text">
                     Already have an account? <Link to="/login" className="auth-link">Login</Link>

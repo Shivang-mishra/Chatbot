@@ -67,46 +67,81 @@
     text-align: center;
 }
 
-.empty-icon {
-    font-size: 40px;
+.welcome-avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--btn-background-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+}
+
+.welcome-robot-icon {
+    font-size: 30px;
     color: var(--accent);
-    margin-bottom: 20px;
-    opacity: 0.8;
 }
 
-.empty-chat-screen h2 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--color);
-    margin-bottom: 10px;
-}
-
-.empty-chat-screen p {
-    font-size: 16px;
-    color: var(--color-secondary);
+.welcome-texts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 40px;
 }
 
+.gradient-text {
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.hello-text {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.sub-text {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.help-text {
+    font-size: 16px;
+    color: var(--color-secondary);
+    margin-top: 15px;
+    font-weight: 400;
+}
+
 .prompt-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
     width: 100%;
-    max-width: 800px;
+    max-width: 600px;
 }
 
 .prompt-card {
     background: var(--btn-background-color);
     border: 1px solid var(--border-color);
-    padding: 20px;
-    border-radius: 16px;
+    padding: 12px 20px;
+    border-radius: 30px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .prompt-card:hover {
@@ -116,12 +151,17 @@
 }
 
 .card-icon {
-    font-size: 20px;
+    font-size: 16px;
+    color: var(--color-secondary);
+    transition: color 0.2s ease;
+}
+
+.prompt-card:hover .card-icon {
     color: var(--accent);
 }
 
 .prompt-card span {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color);
     font-weight: 500;
 }
@@ -174,9 +214,12 @@
     color: var(--background-color);
 }
 
-.ai-avatar {
-    background: var(--accent);
-    color: white;
+.ai-robot-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .user-text {
@@ -338,32 +381,34 @@
 /* Loader */
 .loader {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 15px;
-    background: transparent;
-    width: fit-content;
+    flex-direction: column;
+    gap: 12px;
+    padding: 5px 0;
+    width: 100%;
+    min-width: 150px;
+    max-width: 300px;
 }
 
-.thinking-text {
-    font-size: 13px;
-    color: var(--color-secondary);
-    margin-left: 5px;
+.skeleton-line {
+    height: 12px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--btn-background-color) 25%, var(--hover-btn-background-color) 50%, var(--btn-background-color) 75%);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    animation: skeleton-loading 1.5s infinite ease-in-out;
 }
 
-.dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--color-secondary);
-    border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out both;
+.skeleton-line.short {
+    width: 65%;
 }
-.dot:nth-child(1) { animation-delay: -0.32s; }
-.dot:nth-child(2) { animation-delay: -0.16s; }
 
-@keyframes bounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1); }
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* Input Area Fixed */
@@ -451,4 +496,8 @@
     .prompt-cards {
         grid-template-columns: 1fr;
     }
+}
+
+.darkmode .chatsection {
+    background-color: #172021;
 }

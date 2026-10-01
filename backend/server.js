@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const authMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5001;
 
 connectDB();
@@ -22,6 +23,9 @@ app.use(cookieParser());
 
 const adminRoutes = require('./routes/adminRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const { apiLimiter } = require('./middlewares/rateLimiter');
+
+app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', authMiddleware.authenticateUser, conversationRoutes);

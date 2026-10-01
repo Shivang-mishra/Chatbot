@@ -2,6 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+console.log("HELLO FROM AUTH CONTROLLER");
+
 exports.register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -29,8 +31,18 @@ exports.register = async (req, res) => {
         
         res.status(201).json({ message: "User registered successfully." });
     } catch (error) {
-        console.error("Error in register:", error);
-        res.status(500).json({ error: "Failed to register user." });
+        console.error("Error in register:", error.message || error);
+        
+        if (error.code === 11000) {
+            return res.status(409).json({ error: "Email is already registered." });
+        }
+        
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ error: messages.join(', ') });
+        }
+        
+        res.status(500).json({ error: "Something went wrong on the server. Please try again." });
     }
 };
 
@@ -62,10 +74,10 @@ exports.login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
         
-        res.json({ message: "Logged in successfully.", user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        res.json({ message: "Logged in successfully.", token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
-        console.error("Error in login:", error);
-        res.status(500).json({ error: "Failed to log in." });
+        console.error("Error in login:", error.message || error);
+        res.status(500).json({ error: "Something went wrong on the server. Please try again." });
     }
 };
 

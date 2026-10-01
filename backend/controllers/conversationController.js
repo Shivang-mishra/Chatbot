@@ -120,7 +120,11 @@ exports.addMessageToConversation = async (req, res) => {
             responseText = await geminiService.getChatResponse(messagesForGemini);
         } catch (geminiError) {
             console.error("Gemini Error:", geminiError.message);
-            return res.status(500).json({ error: geminiError.message });
+            const errMessage = geminiError.message.toLowerCase();
+            if (errMessage.includes("429") || errMessage.includes("resource_exhausted") || errMessage.includes("quota")) {
+                return res.status(429).json({ error: "RATE_LIMIT" });
+            }
+            return res.status(500).json({ error: "AI service is temporarily unavailable. Please try again." });
         }
         
         const assistantMessage = new Message({

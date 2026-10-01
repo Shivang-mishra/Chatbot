@@ -177,6 +177,7 @@ function Sidebar() {
         key={item._id} 
         onClick={() => {
           loadConversation(item._id);
+          navigate('/');
           if(window.innerWidth <= 768) setExtend(false);
         }}
         title={item.title}
@@ -225,7 +226,7 @@ function Sidebar() {
         )}
         <div className="sidebar-top">
           <div className="sidebar-header">
-             <div className="logo-container">
+             <div className="logo-container" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
                <FaRobot className="logo-icon" />
                {extend && (
                  <div className="logo-text">
@@ -237,7 +238,7 @@ function Sidebar() {
              <GiHamburgerMenu className="ham-menu" onClick={() => setExtend(prev => !prev)} />
           </div>
 
-          <div className="newchat" onClick={newChat}>
+          <div className="newchat" onClick={() => { newChat(); navigate('/'); }}>
             <FaPlus />
             {extend && <span>New Chat</span>}
           </div>
@@ -306,7 +307,7 @@ function Sidebar() {
                    <div className="menu-item" onClick={openProfileModal}>
                      <FaUser /> My Profile
                    </div>
-                   <div className="menu-item">
+                   <div className="menu-item" onClick={() => navigate('/settings')}>
                      <MdSettings /> Settings
                    </div>
                    {user.role === 'admin' && (

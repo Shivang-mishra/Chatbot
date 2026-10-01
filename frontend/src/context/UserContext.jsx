@@ -139,7 +139,13 @@ function UserContext({ children }) {
                         body: JSON.stringify({ messageContent: input })
                     });
                     const convData = await createRes.json();
-                    if (!createRes.ok) throw new Error(convData.error || "Failed to create conversation");
+                    if (!createRes.ok) {
+                        if (createRes.status === 429 || convData.error === "RATE_LIMIT") {
+                            window.dispatchEvent(new CustomEvent('show-toast', { detail: "Too many requests. Please wait a moment and try again." }));
+                            throw new Error("Too many requests. Please wait a moment and try again.");
+                        }
+                        throw new Error(convData.error || "Failed to create conversation");
+                    }
                     
                     convId = convData._id;
                     setActiveConversationId(convId);
@@ -161,6 +167,10 @@ function UserContext({ children }) {
                 const msgData = await msgRes.json();
 
                 if (!msgRes.ok) {
+                    if (msgRes.status === 429 || msgData.error === "RATE_LIMIT") {
+                        window.dispatchEvent(new CustomEvent('show-toast', { detail: "Too many requests. Please wait a moment and try again." }));
+                        throw new Error("Too many requests. Please wait a moment and try again.");
+                    }
                     throw new Error(msgData.error || "Failed to get AI response.");
                 }
 
@@ -177,13 +187,23 @@ function UserContext({ children }) {
                 }
                 const msgData = await msgRes.json();
 
-                if (!msgRes.ok) throw new Error(msgData.error || "Failed to get AI response.");
+                if (!msgRes.ok) {
+                    if (msgRes.status === 429 || msgData.error === "RATE_LIMIT") {
+                        window.dispatchEvent(new CustomEvent('show-toast', { detail: "Too many requests. Please wait a moment and try again." }));
+                        throw new Error("Too many requests. Please wait a moment and try again.");
+                    }
+                    throw new Error(msgData.error || "Failed to get AI response.");
+                }
 
                 setMessages(prev => [...prev, { role: "assistant", content: msgData.content }]);
             }
         } catch (err) {
             console.error(err);
-            setError(err.message || "Failed to process message. Please try again.")
+            let displayError = err.message || "Failed to process your request. Please try again.";
+            if (displayError.toLowerCase().includes("failed to fetch") || displayError.toLowerCase().includes("network error")) {
+                displayError = "Unable to connect to the server. Please check your connection.";
+            }
+            setError(displayError);
         } finally {
             setLoading(false)
             setInput("")

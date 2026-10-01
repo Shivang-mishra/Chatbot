@@ -99,7 +99,12 @@ Asia/Kolkata (IST)
             responseText += "\n\n**Sources:**\n";
             metadata.groundingChunks.forEach(chunk => {
                 if (chunk.web && chunk.web.uri) {
-                    responseText += `- [${chunk.web.title}](${chunk.web.uri})\n`;
+                    try {
+                        const url = new URL(chunk.web.uri);
+                        responseText += `- [${chunk.web.title}](${chunk.web.uri}) (${url.hostname})\n`;
+                    } catch(e) {
+                        responseText += `- [${chunk.web.title}](${chunk.web.uri})\n`;
+                    }
                 }
             });
         }

@@ -3,6 +3,7 @@ import "./ChatSection.css"
 import Darkmode from '../Darkmode/Darkmode'
 import { LuSendHorizonal, LuCopy, LuRefreshCw } from "react-icons/lu";
 import { FaRobot, FaReact, FaPython, FaDatabase, FaBug } from "react-icons/fa";
+import RobotIcon from '../../assets/robot.svg';
 import { dataContext } from '../../context/UserContext';
 import { AuthContext } from '../../context/AuthContext';
 import ReactMarkdown from 'react-markdown'
@@ -97,40 +98,13 @@ function ChatSection() {
 
   return (
     <div className='chatsection'>
-        <div className="chat-header">
-            <div className="header-left">
-                <h3 className="header-title">Shivang AI</h3>
-                <span className="online-badge">● Online</span>
-            </div>
-            <div className="header-right">
-                <Darkmode/>
-            </div>
-        </div>
-
         <div className="topsection" ref={topSectionRef}>
             {!showResult ? (
                 <div className="empty-chat-screen">
-                    <div className="empty-icon">✦</div>
-                    <h2>Welcome back, {user ? user.name : "Guest"}</h2>
-                    <p>How can I help you today?</p>
-                    
-                    <div className="prompt-cards">
-                        <div className="prompt-card" onClick={() => handleCardClick("Explain some code architecture to me.")}>
-                            <FaReact className="card-icon" />
-                            <span>Explain some code</span>
-                        </div>
-                        <div className="prompt-card" onClick={() => handleCardClick("Help me debug this block of code.")}>
-                            <FaBug className="card-icon" />
-                            <span>Debug my code</span>
-                        </div>
-                        <div className="prompt-card" onClick={() => handleCardClick("Help me learn about machine learning basics.")}>
-                            <FaPython className="card-icon" />
-                            <span>Help me learn</span>
-                        </div>
-                        <div className="prompt-card" onClick={() => handleCardClick("Brainstorm ideas for a new web application.")}>
-                            <FaDatabase className="card-icon" />
-                            <span>Brainstorm ideas</span>
-                        </div>
+                    <div className="welcome-texts">
+                        <h1 className="gradient-text hello-text">HELLO {user ? user.name.toUpperCase() : 'GUEST'},</h1>
+                        <h2 className="gradient-text sub-text">I'm Your Own Assistant</h2>
+                        <p className="help-text">What can I help you...?</p>
                     </div>
                 </div>
             ) : (
@@ -148,7 +122,7 @@ function ChatSection() {
                         ) : (
                             <div className="message-wrapper ai-wrapper" key={index}>
                                 <div className="aibox">
-                                    <div className="avatar ai-avatar"><FaRobot /></div>
+                                    <img src={RobotIcon} alt="AI" className="ai-robot-icon" />
                                     <div className="ai-content">
                                         <div className="markdown-body">
                                             <ReactMarkdown
@@ -187,12 +161,10 @@ function ChatSection() {
                     {loading && (
                         <div className="message-wrapper ai-wrapper">
                             <div className="aibox">
-                                <div className="avatar ai-avatar"><FaRobot /></div>
+                                <img src={RobotIcon} alt="AI" className="ai-robot-icon" />
                                 <div className="loader">
-                                    <span className="dot"></span>
-                                    <span className="dot"></span>
-                                    <span className="dot"></span>
-                                    <span className="thinking-text">Shivang AI is thinking...</span>
+                                    <div className="skeleton-line"></div>
+                                    <div className="skeleton-line short"></div>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +173,7 @@ function ChatSection() {
                     {error && (
                         <div className="message-wrapper ai-wrapper">
                             <div className="aibox">
-                                <div className="avatar ai-avatar"><FaRobot /></div>
+                                <img src={RobotIcon} alt="AI" className="ai-robot-icon" />
                                 <div className="error-text">
                                     <p>{error}</p>
                                 </div>
@@ -214,6 +186,7 @@ function ChatSection() {
 
         <div className="bottomsection">
             <div className="input-container">
+                <Darkmode/>
                 <textarea 
                     onChange={(e)=>setInput(e.target.value)} 
                     onKeyDown={handleKeyDown}

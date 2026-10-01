@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const geminiService = require('../services/geminiService');
+const { chatLimiter } = require('../middlewares/rateLimiter');
 
-router.post('/public', async (req, res) => {
+router.post('/public', chatLimiter, async (req, res) => {
     try {
         const { messages } = req.body;
         if (!messages || !Array.isArray(messages)) {
@@ -13,7 +14,11 @@ router.post('/public', async (req, res) => {
         res.json({ content: responseText });
     } catch (error) {
         console.error("Public chat error:", error.message);
-        res.status(500).json({ error: "Failed to process chat." });
+        const errMessage = error.message.toLowerCase();
+        if (errMessage.includes("429") || errMessage.includes("resource_exhausted") || errMessage.includes("quota")) {
+            return res.status(429).json({ error: "RATE_LIMIT" });
+        }
+        res.status(500).json({ error: "AI service is temporarily unavailable. Please try again." });
     }
 });
 

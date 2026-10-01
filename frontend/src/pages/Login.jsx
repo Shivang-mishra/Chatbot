@@ -7,14 +7,22 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const submittingRef = React.useRef(false);
     const { login } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (submittingRef.current) return;
+        submittingRef.current = true;
+        setIsSubmitting(true);
+        setError(null);
         try {
             await login(email, password);
         } catch (err) {
             setError(err.message);
+            submittingRef.current = false;
+            setIsSubmitting(false);
         }
     };
 
@@ -30,6 +38,7 @@ function Login() {
                         placeholder="Email" 
                         value={email} 
                         onChange={e => setEmail(e.target.value)} 
+                        disabled={isSubmitting}
                         required 
                     />
                     <input 
@@ -38,9 +47,12 @@ function Login() {
                         placeholder="Password" 
                         value={password} 
                         onChange={e => setPassword(e.target.value)} 
+                        disabled={isSubmitting}
                         required 
                     />
-                    <button type="submit" className="auth-button">Login</button>
+                    <button type="submit" className="auth-button" disabled={isSubmitting}>
+                        {isSubmitting ? 'Logging in...' : 'Login'}
+                    </button>
                 </form>
                 <p className="auth-link-text">
                     Don't have an account? <Link to="/register" className="auth-link">Register</Link>
